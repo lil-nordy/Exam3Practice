@@ -181,6 +181,23 @@ def run_test_big_letters():
     print('Expected is:', expected)
     print('Actual is:  ', answer)
 
+    # Test 2:
+    expected = 'OTOAAPS'
+    answer = big_letters([
+                        (3, 1, 4),  # not a string
+                          'Ok what is T?',  # OT
+                          (10, 'Ok what is ThiSSS?', 10),  # not a string
+                          [],  # not a string
+                          ['oops'],  # not a string
+                          'oops',  #
+                          ['OOPS'],  # not a string
+                          '1 O !',  # O
+                          'AA',  # AA
+                          'ooPS $$&*#%&&',  # PS
+                        ])
+    print('Expected is:', expected)
+    print('Actual is:  ', answer)
+
 
 def big_letters(sequence_of_sequences):
     """
