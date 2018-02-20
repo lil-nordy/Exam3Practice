@@ -33,8 +33,8 @@ import rosegraphics as rg
 
 def main():
     """ Calls the   TEST   functions in this module. """
-    run_test_hourglass()
-    # run_test_many_hourglasses()
+    # run_test_hourglass()
+    run_test_many_hourglasses()
 
 
 def run_test_hourglass():
@@ -74,13 +74,7 @@ def hourglass(window, n, point, radius, color):
       -- The middlemost of the circles is centered at the given point.
       -- There is a single circle in that middlemost row.
       -- There are n rows (including the middlemost row)
-            of circles going UP from the middlemost circle.
-      -- There are n rows (including the middlemost row)
-           of circles going DOWN from the middlemost circle.
-      -- Each circle barely touches its neighbor circles.
-
-    Preconditions:
-      :type window: rg.RoseWindow
+            of circles going
       :type n: int
       :type point: rg.Point
       :type radius: int
@@ -101,22 +95,37 @@ def hourglass(window, n, point, radius, color):
     #    DIFFICULTY:      8
     #    TIME ESTIMATE:  25 minutes (warning: this problem is challenging)
     # ------------------------------------------------------------------
-    initial = rg.Circle(point, radius)
-    initial.attach_to(window)
+    middle_circle = rg.Circle(point, radius)
+    middle_circle.fill_color = color
+
+    for k in range(n): # creates the number of rows
+        x = middle_circle.center.x - (radius * k)
+        y = middle_circle.center.y + (radius * k * 3 ** (1/2))  # after each iteration, reset the x-coordinate to the
+        # left, iterate down to the next row.
+        for i in range(k + 1):
+            draw_circle = rg.Circle(rg.Point(x + i * 2 * radius, y), radius)
+            draw_circle.fill_color = color
+            draw_circle.attach_to(window)
+            lines = rg.Line(rg.Point(draw_circle.center.x - radius, draw_circle.center.y),
+                            rg.Point(draw_circle.center.x + radius, draw_circle.center.y))
+            lines.attach_to(window)
+        x = middle_circle.center.x - (radius * k)
+        y = middle_circle.center.y - (radius * k * 3 ** (1/2))  # after each iteration, reset the x-coordinate to the
+        #  left, iterate up to the next row.
+        for j in range(k + 1):
+            draw_circle2 = rg.Circle(rg.Point(x + j * 2 * radius, y), radius)
+            draw_circle2.fill_color = color
+            draw_circle2.attach_to(window)
+            lines = rg.Line(rg.Point(draw_circle2.center.x + radius, draw_circle2.center.y),
+                            rg.Point(draw_circle2.center.x - radius, draw_circle2.center.y))
+            lines.attach_to(window)
+
     window.render()
 
-
-
-def strikethrough(circle, color, window):
-    distance = 2 * circle.radius
-    center = circle.center
-    x1 = center.x - circle.radius
-    x2 = center.x + circle.radius
-    y = center.y
-    line = rg.Line(rg.Point(x1, y), rg.Point(x2, y))
-    line.attach_to(window)
-
-
+# def strikethrough(circle, window):
+#     line = rg.Line(rg.Point(circle.center.x - circle.radius, circle.center.y),
+#                      rg.Point(circle.center.x + circle.radius, circle.center.y))
+#     line.attach_to(window)
 
 
 def run_test_many_hourglasses():
@@ -195,7 +204,31 @@ def many_hourglasses(window, square, m, colors):
     #                         a correct "hourglass" function above)
     #    TIME ESTIMATE:  20 minutes (warning: this problem is challenging)
     # ------------------------------------------------------------------
+    rec = square.get_bounding_box()
+    cent = square.center
+    rad = square.length_of_each_side / 2
+    c_0 = 0
+    for k in range(m):
+        color = colors[c_0 % len(colors)]
+        hourglass(window, k + 1, cent, rad, color)
+        c_0 += 1
+        corner1 = rg.Point(cent.x - (k + 1) * rad, cent.y - (1 + (3 ** (1 / 2)) * k) * rad)
+        corner2 = rg.Point(cent.x + (k + 1) * rad, cent.y + (1 + (3 ** (1 / 2)) * k) * rad)
+        rectangle = rg.Rectangle(corner1, corner2)
+        cent.x = cent.x + (1 + (k + 1) * 2) * rad
+        rectangle.attach_to(window)
+    window.render()
 
+    # # Kinda pretty partial solution
+    # first_rec = square.get_bounding_box()
+    # box_cent = square.center
+    # circ_rad = square.length_of_each_side / 2
+    # c_0 = 0
+    # for k in range(m):
+    #     color = colors[c_0 % len(colors)]
+    #     hourglass(window, k + 1, box_cent, circ_rad, color)
+    #     window.render(.5)
+    #     c_0 += 1
 
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.
